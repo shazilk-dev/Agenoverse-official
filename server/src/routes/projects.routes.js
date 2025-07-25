@@ -13,7 +13,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 router.get("/", getAllProjects);
 router.get("/:id", getProjectById);
 router.post("/", upload.single("image"), createProject);
-router.patch(":id", upload.single("image"), updateProject);
-router.delete(":id", deleteProject);
+router.patch("/:id", upload.single("image"), updateProject);
+router.delete("/:id", deleteProject);
 
 export default router;

@@ -13,7 +13,7 @@ const projectSchema = new mongoose.Schema(
       trim: true,
     },
     content: {
-      type: string,
+      type: String,
     },
     techStack: [
       {
