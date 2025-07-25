@@ -18,8 +18,15 @@ export const getProjectById = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, project, `Fetched project ${id}`));
 });
 export const createProject = asyncHandler(async (req, res) => {
-  const { title, description, techStack, liveUrl, githubUrl, category } =
-    req.body;
+  const {
+    title,
+    description,
+    content,
+    techStack,
+    liveUrl,
+    githubUrl,
+    category,
+  } = req.body;
   if (!title || !description || !category) {
     throw new ApiError(400, "Title, description, and category are required");
   }
@@ -33,6 +40,7 @@ export const createProject = asyncHandler(async (req, res) => {
 
   const project = await Project.create({
     title,
+    content,
     description,
     techStack,
     imageUrl,
@@ -56,6 +64,7 @@ export const updateProject = asyncHandler(async (req, res) => {
   // Update only provided fields
   if (req.body.title) project.title = req.body.title;
   if (req.body.description) project.description = req.body.description;
+  if (req.body.content) project.content = req.body.content;
   if (req.body.techStack) project.techStack = req.body.techStack;
   if (req.body.liveUrl) project.liveUrl = req.body.liveUrl;
   if (req.body.githubUrl) project.githubUrl = req.body.githubUrl;
@@ -83,5 +92,7 @@ export const deleteProject = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .json(new ApiResponse(200, null, `Project ${id} deleted successfully`));
+    .json(
+      new ApiResponse(200, deleteProject, `Project ${id} deleted successfully`)
+    );
 });
