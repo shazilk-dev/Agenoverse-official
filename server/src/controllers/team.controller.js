@@ -19,9 +19,32 @@ export const getTeamById = asyncHandler(async (req, res) => {
 });
 
 export const createTeam = asyncHandler(async (req, res) => {
-  const { name, role, bio, socialLinks } = req.body;
+  const { name, role, bio } = req.body;
+  let socialLinks = req.body.socialLinks;
   if (!name || !role) {
     throw new ApiError(400, "Name and role are required");
+  }
+
+  // Reconstruct socialLinks from flat keys (e.g., socialLinks.linkedin)
+  if (!socialLinks || typeof socialLinks === "string") {
+    socialLinks = {};
+    Object.keys(req.body).forEach((key) => {
+      if (key.startsWith("socialLinks.")) {
+        const subKey = key.split(".")[1];
+        socialLinks[subKey] = req.body[key];
+      }
+    });
+    // If socialLinks was a stringified object, parse it
+    if (
+      typeof req.body.socialLinks === "string" &&
+      Object.keys(socialLinks).length === 0
+    ) {
+      try {
+        socialLinks = JSON.parse(req.body.socialLinks);
+      } catch (err) {
+        socialLinks = {};
+      }
+    }
   }
 
   // Handle photo upload
@@ -59,7 +82,34 @@ export const updateTeam = asyncHandler(async (req, res) => {
   }
   if (req.body.role) team.role = req.body.role;
   if (req.body.bio) team.bio = req.body.bio;
-  if (req.body.socialLinks) team.socialLinks = req.body.socialLinks;
+  if (
+    req.body.socialLinks ||
+    Object.keys(req.body).some((k) => k.startsWith("socialLinks."))
+  ) {
+    let socialLinks = req.body.socialLinks;
+    // Reconstruct socialLinks from flat keys
+    if (!socialLinks || typeof socialLinks === "string") {
+      socialLinks = {};
+      Object.keys(req.body).forEach((key) => {
+        if (key.startsWith("socialLinks.")) {
+          const subKey = key.split(".")[1];
+          socialLinks[subKey] = req.body[key];
+        }
+      });
+      // If socialLinks was a stringified object, parse it
+      if (
+        typeof req.body.socialLinks === "string" &&
+        Object.keys(socialLinks).length === 0
+      ) {
+        try {
+          socialLinks = JSON.parse(req.body.socialLinks);
+        } catch (err) {
+          socialLinks = {};
+        }
+      }
+    }
+    team.socialLinks = socialLinks;
+  }
 
   // Handle photo update
   if (req.file) {
@@ -83,5 +133,5 @@ export const deleteTeam = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .json(new ApiResponse(200, null, `Team ${id} deleted successfully`));
+    .json(new ApiResponse(200, team, `Team ${id} deleted successfully`));
 });

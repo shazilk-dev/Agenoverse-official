@@ -1,5 +1,4 @@
 import express from "express";
-import multer from "multer";
 import {
   getAllJourneys,
   getJourneyById,
@@ -9,15 +8,12 @@ import {
 } from "../controllers/journey.controller.js";
 
 const router = express.Router();
-const upload = multer({
-  dest: "uploads/",
-  limits: { fileSize: 5 * 1024 * 1024 },
-}); // 5MB limit
+import { upload } from "../middlewares/multer.middleware.js";
 
 router.get("/", getAllJourneys);
 router.get("/:id", getJourneyById);
 router.post("/", upload.single("image"), createJourney); // expects 'image' field in form-data
-router.put("/:id", upload.single("image"), updateJourney); // for updating journey image
-router.delete("/:id", deleteJourney);
+router.patch(":id", upload.single("image"), updateJourney); // for updating journey image
+router.delete(":id", deleteJourney);
 
 export default router;

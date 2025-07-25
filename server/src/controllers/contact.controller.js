@@ -4,7 +4,6 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import Contact from "../models/contact.models.js";
 
 export const getAllContacts = asyncHandler(async (req, res) => {
-  // TODO: Fetch all contacts from DB
   const contacts = await Contact.find()
     .sort({ createdAt: -1 })
     .select("-__v -createdAt -updatedAt");
@@ -13,7 +12,6 @@ export const getAllContacts = asyncHandler(async (req, res) => {
 });
 
 export const getContactById = asyncHandler(async (req, res) => {
-  // TODO: Fetch contact by ID from DB
   const contact = await Contact.findById(req.params.id).select(
     "-__v -createdAt -updatedAt"
   );
@@ -21,11 +19,10 @@ export const getContactById = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .json(new ApiResponse(200, null, `Fetched contact ${req.params.id}`));
+    .json(new ApiResponse(200, contact, `Fetched contact ${req.params.id}`));
 });
 
 export const createContact = asyncHandler(async (req, res) => {
-  // TODO: Create new contact in DB
   const { name, email, message } = req.body;
   if (!name || !email || !message) {
     throw new ApiError(400, "Name, email, and message are required");
@@ -55,7 +52,6 @@ export const updateContact = asyncHandler(async (req, res) => {
 });
 
 export const deleteContact = asyncHandler(async (req, res) => {
-  // TODO: Delete contact by ID from DB
   const deletedContact = await Contact.findByIdAndDelete(req.params.id);
 
   if (!deletedContact) {

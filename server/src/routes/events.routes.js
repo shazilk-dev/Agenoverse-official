@@ -1,5 +1,4 @@
 import express from "express";
-import multer from "multer";
 import {
   getAllEvents,
   getEventById,
@@ -9,10 +8,7 @@ import {
 } from "../controllers/events.controller.js";
 
 const router = express.Router();
-const upload = multer({
-  dest: "uploads/",
-  limits: { fileSize: 5 * 1024 * 1024 },
-}); // 5MB limit
+import { upload } from "../middlewares/multer.middleware.js";
 
 router.get("/", getAllEvents);
 router.get("/:id", getEventById);
