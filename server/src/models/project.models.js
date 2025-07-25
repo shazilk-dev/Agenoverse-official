@@ -33,6 +33,18 @@ const projectSchema = new mongoose.Schema(
       required: false,
       trim: true,
     },
+    category: {
+      type: String,
+      required: true,
+      enum: [
+        "Web Development",
+        "Mobile Development",
+        "Data Science",
+        "AI/ML",
+        "Other",
+      ],
+      trim: true,
+    },
     dateStarted: {
       type: Date,
       required: false,
